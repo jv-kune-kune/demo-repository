@@ -7,10 +7,12 @@ on:
 
 jobs:
   add-to-project:
-    name: Add issue to project
+    name: Add To GitHub projects
+    uses: actions/add-to-project@v1.0.2
+            
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/add-to-project@RELEASE_VERSION
+      - uses: actions/add-to-project@v1.0.2
         with:
           # You can target a project in a different organization
           # to the issue
