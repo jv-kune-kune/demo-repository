@@ -11,10 +11,10 @@ permissions:
 
 jobs:
   add-to-project:
+    name: Add To GitHub projects            
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/add-to-project@RELEASE_VERSION
+      - uses: actions/add-to-project@v1.0.2
         with:
           # You can target a project in a different organization
           # to the issue
