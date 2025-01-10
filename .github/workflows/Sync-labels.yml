@@ -3,6 +3,7 @@ on:
   # You can run this with every type of event, but it's better to run it only when you actually need it.
   schedule:
     - cron: "0 * * * *" # Runs every hour
+  workflow_dispatch: # Allows manual triggering
 
 permissions:
   issues: write
