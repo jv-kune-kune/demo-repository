@@ -5,7 +5,12 @@ on:
     types:
       - opened
       - reopened
-
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - ready_for_review
+      
 permissions:
   issues: write
 
