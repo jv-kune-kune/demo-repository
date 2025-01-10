@@ -1,0 +1,105 @@
+-
+  name: 'requirement: could have'
+  color: FBCA04
+  description: 'Nice to have initiatives that will have a small impact if left out'
+  aliases: []
+-
+  name: 'requirement: must have'
+  color: D93F0B
+  description: 'Non-negotiable product needs that are mandatory for the team'
+  aliases: []
+-
+  name: 'requirement: should have'
+  color: 0E8A16
+  description: 'Important initiatives that are not vital, but add significant value'
+  aliases: []
+-
+  name: 'requirement: will not have'
+  color: f3f3f3
+  description: 'Initiatives and ideas that are not priority for this specific time'
+  aliases: []
+-
+  name: 'status: accepted'
+  color: 0E8A16
+  description: 'This is being worked on'
+  aliases: []
+-
+  name: 'status: available'
+  color: C2E0C6
+  description: 'This can be worked on'
+  aliases: []
+-
+  name: 'status: blocked'
+  color: B60205
+  description: 'Work is blocked on this, please comment why'
+  aliases: []
+-
+  name: 'status: completed'
+  color: 0052CC
+  description: 'This is completed'
+  aliases: []
+-
+  name: 'status: duplicate'
+  color: cfd3d7
+  description: 'This issue or pull request already exists'
+  aliases: []
+-
+  name: 'status: help wanted'
+  color: '008672'
+  description: 'Extra attention is needed'
+  aliases: []
+-
+  name: 'status: invalid'
+  color: e4e669
+  description: 'This doesn''t seem right'
+  aliases: []
+-
+  name: 'status: on hold'
+  color: D93F0B
+  description: 'This was started but has been put on hold in favour of higher prioritie issues'
+  aliases: []
+-
+  name: 'status: pending'
+  color: FEF2C0
+  description: 'Work on this requires more discussion'
+  aliases: []
+-
+  name: 'status: review needed'
+  color: FBCA04
+  description: 'This is awaiting review'
+  aliases: []
+-
+  name: 'status: revision needed'
+  color: D93F0B
+  description: 'This needs revision before progressing'
+  aliases: []
+-
+  name: 'type: bug'
+  color: d73a4a
+  description: 'Something isn''t working'
+  aliases: []
+-
+  name: 'type: documentation'
+  color: 0075ca
+  description: 'Improvements or additions to documentation'
+  aliases: []
+-
+  name: 'type: enhancement'
+  color: a2eeef
+  description: 'New feature or request'
+  aliases: []
+-
+  name: 'type: maintenance'
+  color: fbca04
+  description: 'Code maintenance'
+  aliases: []
+-
+  name: 'type: project management'
+  color: C5DEF5
+  description: 'This relates to project management and planning'
+  aliases: []
+-
+  name: 'type: question'
+  color: '5319E7'
+  description: 'Further information is requested'
+  aliases: []
