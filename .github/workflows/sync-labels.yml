@@ -29,7 +29,7 @@ jobs:
           source-repo: jv-kune-kune/PiglioTech-General
 
           # If you're using a private source repo or a URL that needs an 'Authorization' header, you'll need to add a custom token for the action to read it
-          request-token: ${{ secrets.KUNE_KUNE_SYNC_LABELS_PAT }}
+          request-token: ${{ secrets.GITHUB_TOKEN }}
 
           # If you want to delete any additional label, set this to true
           delete-other-labels: true
