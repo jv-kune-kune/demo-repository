@@ -20,5 +20,5 @@ jobs:
           # to the issue
           project-url: https://github.com/orgs/jv-kune-kune/projects/1
           github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
-          labeled: bug, needs-triage
-          label-operator: NOT
+          # labeled: bug, needs-triage
+          # label-operator: NOT
