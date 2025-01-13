@@ -12,6 +12,10 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
+            const githubToken = process.env.GITHUB_TOKEN;
+            const { Octokit } = require("@octokit/core");
+            const octokit = new Octokit({ auth: githubToken });
+
             const projectId = "PVT_kwDOC5OT-c4Av7Na"; // Your Project ID
             const startDateFieldId = "PVTF_lADOC5OT-c4Av7NazgmRpsQ"; // Field ID for Start Date
             const issueId = context.payload.issue.node_id; // Node ID of the created issue
