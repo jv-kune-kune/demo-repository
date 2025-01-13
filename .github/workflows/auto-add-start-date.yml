@@ -5,72 +5,15 @@ on:
     types: [opened]
 
 jobs:
-  add-start-date:
+  set-start-date:
     runs-on: ubuntu-latest
     steps:
-      - name: Add Start Date to Project Item
-        uses: actions/github-script@v6
+      # Step 1: Use the Project Fields action to set the "Start Date"
+      - name: Set Start Date
+        uses: EndBug/project-fields@v2
         with:
-          script: |
-            const projectId = "PVT_kwDOC5OT-c4Av7Na"; // Your Project ID
-            const startDateFieldId = "PVTF_lADOC5OT-c4Av7NazgmRpsQ"; // Field ID for Start Date
-            const issueNodeId = context.payload.issue.node_id; // Node ID of the created issue
-
-            const query = `
-              query($projectId: ID!) {
-                node(id: $projectId) {
-                  ... on ProjectV2 {
-                    items(first: 100) {
-                      nodes {
-                        id
-                        content {
-                          ... on Issue {
-                            id
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            `;
-
-            const mutation = `
-              mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: String!) {
-                updateProjectV2ItemFieldValue(input: {
-                  projectId: $projectId,
-                  itemId: $itemId,
-                  fieldId: $fieldId,
-                  value: { text: $value }
-                }) {
-                  projectV2Item {
-                    id
-                  }
-                }
-              }
-            `;
-
-            // Send GraphQL query to fetch project items
-            const response = await github.graphql(query, { projectId });
-            const projectItems = response.node.items.nodes;
-
-            // Find the project item corresponding to the issue
-            const projectItem = projectItems.find(item => item.content?.id === issueNodeId);
-
-            if (!projectItem) {
-              console.log("Issue is not part of the project. Exiting...");
-              return;
-            }
-
-            // Add today's date to the Start Date field
-            const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
-            await github.graphql(mutation, {
-              projectId,
-              itemId: projectItem.id,
-              fieldId: startDateFieldId,
-              value: today,
-            });
-
-            console.log(`Start Date added to issue: ${context.payload.issue.title}`);
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          operation: set
+          fields: Start date # Replace with the exact field name
+          github_token: ${{ secrets.ADD_TO_PROJECT_PAT }} # Use a PAT with the required permissions
+          project_url: https://github.com/orgs/jv-kune-kune/projects/5 # Replace with your project URL
+          values: ${{ github.event.issue.created_at }}
