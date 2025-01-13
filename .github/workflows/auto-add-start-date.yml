@@ -12,16 +12,11 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const githubToken = process.env.GITHUB_TOKEN;
-            const { Octokit } = require("@octokit/core");
-            const octokit = new Octokit({ auth: githubToken });
-
             const projectId = "PVT_kwDOC5OT-c4Av7Na"; // Your Project ID
             const startDateFieldId = "PVTF_lADOC5OT-c4Av7NazgmRpsQ"; // Field ID for Start Date
-            const issueId = context.payload.issue.node_id; // Node ID of the created issue
+            const issueNodeId = context.payload.issue.node_id; // Node ID of the created issue
 
-            // Fetch project items to locate the issue
-            const { node: project } = await octokit.graphql(`
+            const query = `
               query($projectId: ID!) {
                 node(id: $projectId) {
                   ... on ProjectV2 {
@@ -38,18 +33,9 @@ jobs:
                   }
                 }
               }
-            `, { projectId });
+            `;
 
-            const projectItem = project.items.nodes.find(item => item.content?.id === issueId);
-
-            if (!projectItem) {
-              console.log("Issue is not part of the project. Exiting...");
-              return;
-            }
-
-            // Add today's date to the Start Date field
-            const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
-            await octokit.graphql(`
+            const mutation = `
               mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: String!) {
                 updateProjectV2ItemFieldValue(input: {
                   projectId: $projectId,
@@ -62,7 +48,23 @@ jobs:
                   }
                 }
               }
-            `, {
+            `;
+
+            // Send GraphQL query to fetch project items
+            const response = await github.graphql(query, { projectId });
+            const projectItems = response.node.items.nodes;
+
+            // Find the project item corresponding to the issue
+            const projectItem = projectItems.find(item => item.content?.id === issueNodeId);
+
+            if (!projectItem) {
+              console.log("Issue is not part of the project. Exiting...");
+              return;
+            }
+
+            // Add today's date to the Start Date field
+            const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
+            await github.graphql(mutation, {
               projectId,
               itemId: projectItem.id,
               fieldId: startDateFieldId,
