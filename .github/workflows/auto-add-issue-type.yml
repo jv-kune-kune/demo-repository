@@ -39,12 +39,32 @@ jobs:
             *) echo "field=unknown" >> $GITHUB_ENV ;; # Default case if no keyword is matched
           esac
 
-      # Step 3: Update Project Field
-      - name: Update Project Field
+      # Step 3: Fetch Current Field Value
+      - name: Get Current Field Value
+        id: get-field
+        uses: EndBug/project-fields@v2
+        with:
+          operation: get
+          fields: Issue Type
+          github_token: ${{ secrets.PAT_SECRET }}
+          project_url: https://github.com/orgs/jv-kune-kune/projects/1
+
+      # Step 4: Update Field Only If Empty
+      - name: Update Field If Empty
+        if: ${{ steps.get-field.outputs.values == '' }} # Only update if the field is empty
         uses: EndBug/project-fields@v2
         with:
           operation: set
-          fields: Issue Type # Replace with your field's exact name
+          fields: Issue Type
           github_token: ${{ secrets.PAT_SECRET }}
-          project_url: https://github.com/orgs/jv-kune-kune/projects/1 # Replace with your project URL
+          project_url: https://github.com/orgs/jv-kune-kune/projects/1
           values: ${{ env.field }}
+
+      # Step 5: Alert User If Field and Title Conflict
+      - name: Post Conflict Comment
+        if: ${{ steps.get-field.outputs.values != '' && steps.get-field.outputs.values != env.field }}
+        run: |
+          gh api repos/${{ github.repository }}/issues/${{ github.event.issue.number || github.event.pull_request.number }}/comments \
+            -f body=":warning: The **Issue Type** field is currently set to '${{ steps.get-field.outputs.values }}', but the title suggests '${{ env.field }}'. Please manually resolve the conflict."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
