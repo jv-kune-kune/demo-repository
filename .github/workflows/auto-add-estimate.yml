@@ -3,10 +3,6 @@ name: Update Estimate Based on Size
 on:
   issues:
     types: [labeled, unlabeled, edited]
-  project_card:
-    types: [created, edited, moved]
-  project:
-    types: [updated]
 
 jobs:
   set-estimate:
