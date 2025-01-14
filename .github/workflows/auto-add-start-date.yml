@@ -15,5 +15,5 @@ jobs:
           operation: set
           fields: Start date # Replace with the exact field name
           github_token: ${{ secrets.PAT_SECRET }} # Use a PAT with the required permissions
-          project_url: https://github.com/orgs/jv-kune-kune/projects/5 # Replace with your project URL
+          project_url: https://github.com/orgs/jv-kune-kune/projects/1 # Replace with your project URL
           values: ${{ github.event.issue.created_at }}
