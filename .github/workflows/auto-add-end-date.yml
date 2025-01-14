@@ -15,5 +15,5 @@ jobs:
           operation: set
           fields: End date 
           github_token: ${{ secrets.PAT_SECRET }} 
-          project_url: https://github.com/orgs/jv-kune-kune/projects/5 
+          project_url: https://github.com/orgs/jv-kune-kune/projects/1
           values: ${{ github.event.issue.closed_at }}
