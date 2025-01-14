@@ -18,23 +18,53 @@ jobs:
           project_url: https://github.com/orgs/jv-kune-kune/projects/1
         id: get-fields
 
-      # Step 2: Set the Estimate field if it’s blank and Size has a value
+      # Step 2: Check Field Values and Exit Gracefully if Empty
+      - name: Validate Fields
+        id: validate-fields
+        run: |
+          echo "Fields: ${{ steps.get-fields.outputs.values }}"
+          if [[ "${{ steps.get-fields.outputs.values }}" == ',' ]]; then
+            echo "Fields are empty. Exiting gracefully."
+            exit 0
+          fi
+
+      # Step 3: Determine Estimate Value
+      - name: Determine Estimate
+        id: determine-estimate
+        run: |
+          size=$(echo "${{ steps.get-fields.outputs.values }}" | cut -d',' -f1)
+          estimate=$(echo "${{ steps.get-fields.outputs.values }}" | cut -d',' -f2)
+          
+          echo "Size: $size"
+          echo "Estimate: $estimate"
+
+          # Map size to estimate value
+          case "$size" in
+            "XXS") value="0" ;;
+            "XS") value="1" ;;
+            "S") value="2" ;;
+            "M") value="3" ;;
+            "L") value="8" ;;
+            "XL") value="13" ;;
+            "XXL") value="21" ;;
+            *) value="Unknown" ;;
+          esac
+
+          # Only proceed if Estimate field is empty
+          if [[ -n "$estimate" ]]; then
+            echo "Estimate already set to $estimate. No changes needed."
+            exit 0
+          fi
+
+          echo "value=$value" >> $GITHUB_ENV
+
+      # Step 4: Set Estimate Field
       - name: Set Estimate
-        if: ${{ steps.get-fields.outputs.values != ',' }} # Ensure at least one field has a value
+        if: ${{ env.value != 'Unknown' }}
         uses: EndBug/project-fields@v2
         with:
           operation: set
           fields: Estimate
           github_token: ${{ secrets.PAT_SECRET }}
           project_url: https://github.com/orgs/jv-kune-kune/projects/1
-          values: |
-            ${{ 
-              steps.get-fields.outputs.values == 'XXS,' && '0' || 
-              steps.get-fields.outputs.values == 'XS,' && '1' || 
-              steps.get-fields.outputs.values == 'S,' && '2' || 
-              steps.get-fields.outputs.values == 'M,' && '3' || 
-              steps.get-fields.outputs.values == 'L,' && '8' || 
-              steps.get-fields.outputs.values == 'XL,' && '13' || 
-              steps.get-fields.outputs.values == 'XXL,' && '21' || 
-              'Unknown' 
-            }}
+          values: ${{ env.value }}
