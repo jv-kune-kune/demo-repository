@@ -15,7 +15,7 @@ jobs:
           operation: get
           fields: Size,Estimate
           github_token: ${{ secrets.PAT_SECRET }}
-          project_url: https://github.com/orgs/jv-kune-kune/projects/5
+          project_url: https://github.com/orgs/jv-kune-kune/projects/1
         id: get-fields
 
       # Step 2: Set the Estimate field if it’s blank and Size has a value
