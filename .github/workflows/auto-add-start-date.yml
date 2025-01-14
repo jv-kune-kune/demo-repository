@@ -1,22 +1,22 @@
 name: Add Start Date to Issues
 
 on:
-  workflow_run:
-    workflows:
-      - Auto Add Project
-    types:
-      - completed
+  issues:
+    types: [opened]
 
 jobs:
   set-start-date:
     runs-on: ubuntu-latest
     steps:
+      # wait Step 1: Add a delay to ensure the "Auto Add Project" workflow completes
+      - name: Wait for 15 seconds
+        run: sleep 15
+      # Step 1: Use the Project Fields action to set the "Start Date"
       - name: Set Start Date
         uses: EndBug/project-fields@v2
         with:
           operation: set
-          fields: Start date
-          github_token: ${{ secrets.PAT_SECRET }}
-          project_url: https://github.com/orgs/jv-kune-kune/projects/1
-          resource_url: ${{ github.event.workflow_run.outputs.resource_url }}
-          values: ${{ github.event.workflow_run.head_commit.timestamp }}
+          fields: Start date # Replace with the exact field name
+          github_token: ${{ secrets.PAT_SECRET }} # Use a PAT with the required permissions
+          project_url: https://github.com/orgs/jv-kune-kune/projects/1 # Replace with your project URL
+          values: ${{ github.event.issue.created_at }}
