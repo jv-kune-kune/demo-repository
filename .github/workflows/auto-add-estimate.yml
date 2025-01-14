@@ -8,30 +8,61 @@ jobs:
   set-estimate:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Fetch the Size field
-      - name: Get Size
+      # Step 1: Fetch Size and Estimate Fields
+      - name: Get Fields
         uses: EndBug/project-fields@v2
         with:
           operation: get
-          fields: Size,Estimate # Fetch both fields
+          fields: Size,Estimate
           github_token: ${{ secrets.PAT_SECRET }}
           project_url: https://github.com/orgs/jv-kune-kune/projects/5
-        id: get-size
+        id: get-fields
 
-      # Step 2: Update Estimate based on Size if Estimate is blank
-      - name: Set Estimate
-        if: ${{ steps.get-size.outputs.values.split(',')[0] != '' && steps.get-size.outputs.values.split(',')[1] == '' }}
-        uses: EndBug/project-fields@v2
-        with:
-          operation: set
-          fields: Estimate
-          github_token: ${{ secrets.PAT_SECRET }}
-          project_url: https://github.com/orgs/jv-kune-kune/projects/5
-          values: |
-            ${{ steps.get-size.outputs.values.split(',')[0] == 'XXS' && 0 ||
-                 steps.get-size.outputs.values.split(',')[0] == 'XS' && 1 ||
-                 steps.get-size.outputs.values.split(',')[0] == 'S' && 2 ||
-                 steps.get-size.outputs.values.split(',')[0] == 'M' && 3 ||
-                 steps.get-size.outputs.values.split(',')[0] == 'L' && 8 ||
-                 steps.get-size.outputs.values.split(',')[0] == 'XL' && 13 ||
-                 steps.get-size.outputs.values.split(',')[0] == 'XXL' && 21 }}
+      # Step 2: Update Estimate if Size is Set and Estimate is Blank
+      - name: Update Estimate
+        run: |
+          echo "Extracting field values..."
+          SIZE=$(echo "${{ steps.get-fields.outputs.values }}" | cut -d',' -f1)
+          ESTIMATE=$(echo "${{ steps.get-fields.outputs.values }}" | cut -d',' -f2)
+          
+          echo "Size: $SIZE"
+          echo "Estimate: $ESTIMATE"
+
+          if [ -n "$SIZE" ] && [ -z "$ESTIMATE" ]; then
+            echo "Calculating Estimate..."
+            case "$SIZE" in
+              XXS) VALUE=0 ;;
+              XS) VALUE=1 ;;
+              S) VALUE=2 ;;
+              M) VALUE=3 ;;
+              L) VALUE=8 ;;
+              XL) VALUE=13 ;;
+              XXL) VALUE=21 ;;
+              *) VALUE="Unknown" ;;
+            esac
+
+            echo "Updating Estimate field with value: $VALUE"
+
+            # Update the Estimate field
+            gh api graphql --method POST -F query='
+              mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: String!) {
+                updateProjectV2ItemFieldValue(input: {
+                  projectId: $projectId,
+                  itemId: $itemId,
+                  fieldId: $fieldId,
+                  value: { text: $value }
+                }) {
+                  projectV2Item {
+                    id
+                  }
+                }
+              }' \
+              -F projectId="PVT_PROJECT_ID" \
+              -F itemId="${{ github.event.issue.node_id }}" \
+              -F fieldId="ESTIMATE_FIELD_ID" \
+              -F value="$VALUE"
+          else
+            echo "No update required."
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.PAT_SECRET }}
