@@ -1,4 +1,4 @@
-name: Assign Fields Based on Title
+name: Assign Issue Type Field Based on Title
 
 on:
   issues:
