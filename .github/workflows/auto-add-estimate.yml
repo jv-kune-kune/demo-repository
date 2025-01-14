@@ -26,7 +26,7 @@ jobs:
           operation: set
           fields: Estimate
           github_token: ${{ secrets.PAT_SECRET }}
-          project_url: https://github.com/orgs/jv-kune-kune/projects/5
+          project_url: https://github.com/orgs/jv-kune-kune/projects/1
           values: |
             ${{ 
               steps.get-fields.outputs.values == 'XXS,' && '0' || 
