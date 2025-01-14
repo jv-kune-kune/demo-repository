@@ -2,9 +2,9 @@ name: Assign Issue Type Field Based on Title
 
 on:
   issues:
-    types: [opened, edited, reopened]
+    types: [labeled, unlabeled, edited, reopened]
   pull_request:
-    types: [opened, edited, reopened]
+    types: [labeled, unlabeled, edited, reopened]
 
 jobs:
   assign-fields:
