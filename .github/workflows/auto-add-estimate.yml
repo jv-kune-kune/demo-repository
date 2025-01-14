@@ -43,6 +43,9 @@ jobs:
 
             echo "Updating Estimate field with value: $VALUE"
 
+            # Wrap VALUE in double quotes to ensure it's treated as a string
+            VALUE="\"$VALUE\""
+
             # Update the Estimate field
             gh api graphql --method POST -F query='
               mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: String!) {
