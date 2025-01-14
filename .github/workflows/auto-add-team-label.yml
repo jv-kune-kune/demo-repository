@@ -12,5 +12,5 @@ jobs:
       - name: Add Label to Issue
         uses: actions-ecosystem/action-add-labels@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.PAT_SECRET }}
           labels: "👥 project management 📋"
