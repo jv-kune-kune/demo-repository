@@ -2,7 +2,7 @@ name: Add Start Date to "In Progress" Issues
 
 on:
   project:
-    types: [updated, labeled, unlabeled, edited, reopened]
+    types: [opened, updated, edited, reopened]
   project_card:
     types: [moved, edited]
 
@@ -10,6 +10,9 @@ jobs:
   set-start-date:
     runs-on: ubuntu-latest
     steps:
+      # Wait Step
+      - name: Wait for 5 seconds
+        run: sleep 5
       # Step 1: Check if Status is "In Progress"
       - name: Check Status
         id: check-status
