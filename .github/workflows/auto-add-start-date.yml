@@ -3,7 +3,7 @@ name: Add Start Date to Issues
 on:
   workflow_run:
     workflows:
-      - Add to Project
+      - Auto Add Project
     types:
       - completed
 
