@@ -11,7 +11,6 @@ jobs:
   set-start-date:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Set Start Date
       - name: Set Start Date
         uses: EndBug/project-fields@v2
         with:
@@ -19,5 +18,5 @@ jobs:
           fields: Start date
           github_token: ${{ secrets.PAT_SECRET }}
           project_url: https://github.com/orgs/jv-kune-kune/projects/1
-          resource_url: ${{ github.event.workflow_run.head_commit.message }} # Extract the resource URL
+          resource_url: ${{ github.event.workflow_run.outputs.resource_url }}
           values: ${{ github.event.workflow_run.head_commit.timestamp }}
