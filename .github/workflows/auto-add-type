@@ -1,0 +1,50 @@
+name: Assign Fields Based on Title
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+  pull_request:
+    types: [opened, edited, reopened]
+
+jobs:
+  assign-fields:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Extract title
+      - name: Extract Title
+        id: extract-title
+        run: |
+          if [ "${{ github.event_name }}" == "issues" ]; then
+            echo "title=${{ github.event.issue.title }}" >> $GITHUB_ENV
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "title=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
+          fi
+
+      # Step 2: Determine Field Value
+      - name: Determine Field
+        id: determine-field
+        run: |
+          case "${{ env.title }}" in
+            feat:*) echo "field=feature 🛠" >> $GITHUB_ENV ;;
+            fix:*) echo "field=bug fix 🐛" >> $GITHUB_ENV ;;
+            docs:*) echo "field=documentation 📝" >> $GITHUB_ENV ;;
+            chore:*) echo "field=chore 🧹" >> $GITHUB_ENV ;;
+            test:*) echo "field=testing ✅" >> $GITHUB_ENV ;;
+            perf:*) echo "field=performance 🏎" >> $GITHUB_ENV ;;
+            style:*) echo "field=style 🎨" >> $GITHUB_ENV ;;
+            refactor:*) echo "field=refactor ♻️" >> $GITHUB_ENV ;;
+            ci:*) echo "field=ci/cd ⚙️" >> $GITHUB_ENV ;;
+            build:*) echo "field=build 🏗️" >> $GITHUB_ENV ;;
+            revert:*) echo "field=revert 🔄" >> $GITHUB_ENV ;;
+            *) echo "field=unknown" >> $GITHUB_ENV ;; # Default case if no keyword is matched
+          esac
+
+      # Step 3: Update Project Field
+      - name: Update Project Field
+        uses: EndBug/project-fields@v2
+        with:
+          operation: set
+          fields: Issue Type # Replace with your field's exact name
+          github_token: ${{ secrets.PAT_SECRET }}
+          project_url: https://github.com/orgs/YOUR_ORG/projects/YOUR_PROJECT_ID # Replace with your project URL
+          values: ${{ env.field }}
