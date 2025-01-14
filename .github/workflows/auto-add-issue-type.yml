@@ -46,5 +46,5 @@ jobs:
           operation: set
           fields: Issue Type # Replace with your field's exact name
           github_token: ${{ secrets.PAT_SECRET }}
-          project_url: https://github.com/orgs/YOUR_ORG/projects/YOUR_PROJECT_ID # Replace with your project URL
+          project_url: https://github.com/orgs/jv-kune-kune/projects/1 # Replace with your project URL
           values: ${{ env.field }}
