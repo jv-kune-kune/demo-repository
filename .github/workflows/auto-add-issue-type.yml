@@ -24,7 +24,7 @@ jobs:
       - name: Determine Field
         id: determine-field
         run: |
-          case "${{ env.title }}" in
+          case "$(echo "${{ env.title }}" | tr '[:upper:]' '[:lower:]')" in
             feat:*) echo "field=feature 🛠" >> $GITHUB_ENV ;;
             fix:*) echo "field=bug fix 🐛" >> $GITHUB_ENV ;;
             docs:*) echo "field=documentation 📝" >> $GITHUB_ENV ;;
