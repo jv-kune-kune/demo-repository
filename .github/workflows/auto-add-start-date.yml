@@ -1,8 +1,11 @@
 name: Add Start Date to Issues
 
 on:
-  issues:
-    types: [opened]
+  workflow_run:
+    workflows:
+      - Add to Project
+    types:
+      - completed
 
 jobs:
   set-start-date:
