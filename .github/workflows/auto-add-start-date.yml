@@ -1,22 +1,32 @@
-name: Add Start Date to Issues
+name: Add Start Date to "In Progress" Issues
 
 on:
-  issues:
-    types: [opened]
+  project:
+    types: [updated]
 
 jobs:
   set-start-date:
     runs-on: ubuntu-latest
     steps:
-      # wait Step 1: Add a delay to ensure the "Auto Add Project" workflow completes
-      - name: Wait for 15 seconds
-        run: sleep 15
-      # Step 1: Use the Project Fields action to set the "Start Date"
+      # Step 1: Check if Status is "In Progress"
+      - name: Check Status
+        id: check-status
+        uses: EndBug/project-fields@v2
+        with:
+          operation: get
+          fields: Status
+          github_token: ${{ secrets.PAT_SECRET }}
+          project_url: https://github.com/orgs/jv-kune-kune/projects/1
+        env:
+          TARGET_STATUS: "In Progress"
+
+      # Step 2: Set Start Date if Status is "In Progress"
       - name: Set Start Date
+        if: ${{ steps.check-status.outputs.values == env.TARGET_STATUS }}
         uses: EndBug/project-fields@v2
         with:
           operation: set
-          fields: Start date # Replace with the exact field name
-          github_token: ${{ secrets.PAT_SECRET }} # Use a PAT with the required permissions
-          project_url: https://github.com/orgs/jv-kune-kune/projects/1 # Replace with your project URL
-          values: ${{ github.event.issue.created_at }}
+          fields: Start date
+          github_token: ${{ secrets.PAT_SECRET }}
+          project_url: https://github.com/orgs/jv-kune-kune/projects/1
+          values: ${{ github.event.project.updated_at }}
