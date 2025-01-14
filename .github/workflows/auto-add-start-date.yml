@@ -2,7 +2,9 @@ name: Add Start Date to "In Progress" Issues
 
 on:
   project:
-    types: [updated]
+    types: [updated, labeled, unlabeled, edited, reopened]
+  project_card:
+    types: [moved, edited]
 
 jobs:
   set-start-date:
