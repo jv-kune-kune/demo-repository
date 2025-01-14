@@ -5,22 +5,22 @@ on:
     types: [labeled, unlabeled, edited]
 
 jobs:
-  update-estimate:
+  set-estimate:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Fetch Size and Estimate Fields
-      - name: Get Fields
+      # Step 1: Fetch the Size field
+      - name: Get Size
         uses: EndBug/project-fields@v2
         with:
           operation: get
           fields: Size,Estimate # Fetch both fields
           github_token: ${{ secrets.PAT_SECRET }}
           project_url: https://github.com/orgs/jv-kune-kune/projects/5
-        id: get-fields
+        id: get-size
 
-      # Step 2: Update Estimate if Blank and Size Has a Value
-      - name: Update Estimate
-        if: ${{ steps.get-fields.outputs.values.split(',')[0] != '' && steps.get-fields.outputs.values.split(',')[1] == '' }} # Check if Size is set AND Estimate is blank
+      # Step 2: Update Estimate based on Size if Estimate is blank
+      - name: Set Estimate
+        if: ${{ steps.get-size.outputs.values.split(',')[0] != '' && steps.get-size.outputs.values.split(',')[1] == '' }}
         uses: EndBug/project-fields@v2
         with:
           operation: set
@@ -28,11 +28,10 @@ jobs:
           github_token: ${{ secrets.PAT_SECRET }}
           project_url: https://github.com/orgs/jv-kune-kune/projects/5
           values: |
-            ${{ steps.get-fields.outputs.values.split(',')[0] == 'XXS' && '0' || 
-                 steps.get-fields.outputs.values.split(',')[0] == 'XS' && '1' || 
-                 steps.get-fields.outputs.values.split(',')[0] == 'S' && '2' || 
-                 steps.get-fields.outputs.values.split(',')[0] == 'M' && '3' || 
-                 steps.get-fields.outputs.values.split(',')[0] == 'L' && '8' || 
-                 steps.get-fields.outputs.values.split(',')[0] == 'XL' && '13' || 
-                 steps.get-fields.outputs.values.split(',')[0] == 'XXL' && '21' || 
-                 'Unknown' }}
+            ${{ steps.get-size.outputs.values.split(',')[0] == 'XXS' && 0 ||
+                 steps.get-size.outputs.values.split(',')[0] == 'XS' && 1 ||
+                 steps.get-size.outputs.values.split(',')[0] == 'S' && 2 ||
+                 steps.get-size.outputs.values.split(',')[0] == 'M' && 3 ||
+                 steps.get-size.outputs.values.split(',')[0] == 'L' && 8 ||
+                 steps.get-size.outputs.values.split(',')[0] == 'XL' && 13 ||
+                 steps.get-size.outputs.values.split(',')[0] == 'XXL' && 21 }}
