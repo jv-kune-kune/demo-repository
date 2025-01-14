@@ -11,12 +11,13 @@ jobs:
   set-start-date:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Use the Project Fields action to set the "Start Date"
+      # Step 1: Set Start Date
       - name: Set Start Date
         uses: EndBug/project-fields@v2
         with:
           operation: set
-          fields: Start date # Replace with the exact field name
-          github_token: ${{ secrets.PAT_SECRET }} # Use a PAT with the required permissions
-          project_url: https://github.com/orgs/jv-kune-kune/projects/1 # Replace with your project URL
-          values: ${{ github.event.issue.created_at }}
+          fields: Start date
+          github_token: ${{ secrets.PAT_SECRET }}
+          project_url: https://github.com/orgs/jv-kune-kune/projects/1
+          resource_url: ${{ github.event.workflow_run.head_commit.message }} # Extract the resource URL
+          values: ${{ github.event.workflow_run.head_commit.timestamp }}
