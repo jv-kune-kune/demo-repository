@@ -49,7 +49,7 @@ jobs:
           github_token: ${{ secrets.PAT_SECRET }}
           project_url: https://github.com/orgs/jv-kune-kune/projects/1
 
-      # Step 4: Update Field Only If Empty
+      # Step 4: Update Field If Empty
       - name: Update Field If Empty
         if: ${{ steps.get-field.outputs.values == '' }} # Only update if the field is empty
         uses: EndBug/project-fields@v2
@@ -60,11 +60,12 @@ jobs:
           project_url: https://github.com/orgs/jv-kune-kune/projects/1
           values: ${{ env.field }}
 
-      # Step 5: Alert User If Field and Title Conflict
-      - name: Post Conflict Comment
+      # Step 5: Log a Notification if Field Was Updated
+      - name: Log Notification for Field Update
+        if: ${{ steps.get-field.outputs.values == '' }}
+        run: echo "::notice title=Field Updated::The Issue Type field was set to '${{ env.field }}'."
+
+      # Step 6: Log a Warning if Field and Title Conflict
+      - name: Notify Conflict
         if: ${{ steps.get-field.outputs.values != '' && steps.get-field.outputs.values != env.field }}
-        run: |
-          gh api repos/${{ github.repository }}/issues/${{ github.event.issue.number || github.event.pull_request.number }}/comments \
-            -f body=":warning: The **Issue Type** field is currently set to '${{ steps.get-field.outputs.values }}', but the title suggests '${{ env.field }}'. Please manually resolve the conflict."
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "::warning title=Field Conflict::The field is set to '${{ steps.get-field.outputs.values }}', but the title suggests '${{ env.field }}'. Please manually resolve this."
