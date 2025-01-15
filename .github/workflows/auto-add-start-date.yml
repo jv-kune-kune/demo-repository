@@ -1,3 +1,5 @@
+name: Update Start Date
+
 on:
   issues:
     types: [opened, labeled, edited, reopened]
@@ -9,14 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Step 1: Delay for newly opened issues
-      - name: Add delay for issue opened
+      - name: Delay for Newly Opened Issues
         if: ${{ github.event_name == 'issues' && github.event.action == 'opened' }}
         run: |
           echo "Delaying for 5 minutes..."
           sleep 300 # Delay for 300 seconds (5 minutes)
 
       # Step 2: Get Issue Fields
-      - name: Get Issue Fields
+      - name: Retrieve Issue Fields
         id: get-fields
         uses: EndBug/project-fields@v2
         with:
@@ -27,19 +29,24 @@ jobs:
 
       # Step 3: Check and Set Start Date
       - name: Check and Set Start Date
-        if: ${{ steps.get-fields.outputs.values }}
+        if: ${{ success() }}
         run: |
           status=$(echo "${{ steps.get-fields.outputs.values }}" | cut -d',' -f1)
           start_date=$(echo "${{ steps.get-fields.outputs.values }}" | cut -d',' -f2)
-          
-          if [[ "$status" == "In Progress" && -z "$start_date" ]]; then
+
+          echo "Status: $status"
+          echo "Start Date: $start_date"
+
+          if [[ "$status" == "In progress" && -z "$start_date" ]]; then
             today=$(date +%Y-%m-%d)
             echo "Setting Start Date to $today"
             echo "value=$today" >> $GITHUB_ENV
+          else
+            echo "No updates needed."
           fi
 
       # Step 4: Set Start Date Field
-      - name: Set Start Date Field
+      - name: Update Start Date Field
         if: ${{ env.value }}
         uses: EndBug/project-fields@v2
         with:
