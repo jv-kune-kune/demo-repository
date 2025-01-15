@@ -2,13 +2,22 @@ name: Update Estimate Based on Size
 
 on:
   issues:
-    types: [labeled, unlabeled, edited]
+    types: [opened, labeled, edited, reopened]
+  schedule:
+    - cron: "0 23 * * *" # Run daily at 11 PM
 
 jobs:
   set-estimate:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Fetch Size and Estimate Fields
+      # Step 1: Delay for newly opened issues
+      - name: Add delay for issue opened
+        if: ${{ github.event_name == 'issues' && github.event.action == 'opened' }}
+        run: |
+          echo "Delaying for 5 minutes..."
+          sleep 300 # Delay for 300 seconds (5 minutes)
+
+      # Step 2: Fetch Size and Estimate Fields
       - name: Get Fields
         uses: EndBug/project-fields@v2
         with:
@@ -18,7 +27,7 @@ jobs:
           project_url: https://github.com/orgs/jv-kune-kune/projects/1
         id: get-fields
 
-      # Step 2: Check Field Values and Exit Gracefully if Empty
+      # Step 3: Check Field Values and Exit Gracefully if Empty
       - name: Validate Fields
         id: validate-fields
         run: |
@@ -28,7 +37,7 @@ jobs:
             exit 0
           fi
 
-      # Step 3: Determine Estimate Value
+      # Step 4: Determine Estimate Value
       - name: Determine Estimate
         id: determine-estimate
         run: |
@@ -58,7 +67,7 @@ jobs:
 
           echo "value=$value" >> $GITHUB_ENV
 
-      # Step 4: Set Estimate Field
+      # Step 5: Set Estimate Field
       - name: Set Estimate
         if: ${{ env.value != 'Unknown' }}
         uses: EndBug/project-fields@v2
