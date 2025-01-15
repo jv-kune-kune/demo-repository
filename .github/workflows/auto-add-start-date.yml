@@ -46,5 +46,5 @@ jobs:
           operation: set
           fields: Start Date
           github_token: ${{ secrets.PAT_SECRET }}
-          project_url: https://github.com/orgs/your-org/projects/1
+          project_url: https://github.com/orgs/jv-kune-kune/projects/1
           values: ${{ env.value }}
