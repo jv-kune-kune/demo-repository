@@ -23,7 +23,7 @@ jobs:
           operation: get
           fields: Status,Start Date
           github_token: ${{ secrets.PAT_SECRET }}
-          project_url: https://github.com/orgs/your-org/projects/1
+          project_url: https://github.com/orgs/jv-kune-kune/projects/1
 
       # Step 3: Check and Set Start Date
       - name: Check and Set Start Date
